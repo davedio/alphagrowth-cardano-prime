@@ -64,17 +64,27 @@
           </div>
         </div>
 
-        <div class="hero-orbit" aria-hidden="true">
-          <div class="orbit orbit-one"></div>
-          <div class="orbit orbit-two"></div>
-          <div class="orbit-core">
-            <span>PRIME</span>
-            <strong>₳120M</strong>
-            <small>REQUEST</small>
-          </div>
-          <div class="orbit-tag tag-one">AUDIT</div>
-          <div class="orbit-tag tag-two">DEPLOY</div>
-          <div class="orbit-tag tag-three">MEASURE</div>
+        <div class="hero-orbit">
+          <div class="orbit orbit-one" aria-hidden="true"></div>
+          <div class="orbit orbit-two" aria-hidden="true"></div>
+          <a
+            class="orbit-core"
+            id="liveVoteCore"
+            data-feed-state="loading"
+            href="https://adastat.net/governances/529dccaadaa000746c22f1682574cb3f436eeba4d19710b90791a54226dc96d700"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Live DRep Yes voting power from AdaStat. Loading."
+            aria-busy="true"
+          >
+            <span id="liveVoteEyebrow">LIVE · ADASTAT</span>
+            <strong id="liveYesPercent">--.--%</strong>
+            <small id="liveVoteLabel">CONNECTING</small>
+          </a>
+          <span class="sr-only" id="liveVoteAnnouncement" role="status" aria-live="polite"></span>
+          <div class="orbit-tag tag-one" aria-hidden="true">AUDIT</div>
+          <div class="orbit-tag tag-two" aria-hidden="true">DEPLOY</div>
+          <div class="orbit-tag tag-three" aria-hidden="true">MEASURE</div>
         </div>
 
         <div class="metric-strip reveal" aria-label="Proposal key figures">
@@ -83,7 +93,7 @@
           <div><strong>72.5%</strong><span>max fee tied to results</span></div>
           <div><strong>$200M+</strong><span>net qualifying TVL target</span></div>
           <div><strong id="heroTeamMetric">27</strong><span>DeFi teams &amp; growing</span></div>
-          <div><strong id="heroYesCount">54</strong><span>verified Yes votes</span></div>
+          <div><strong id="heroYesCount">--</strong><span>live Yes votes</span></div>
         </div>
       </section>
 

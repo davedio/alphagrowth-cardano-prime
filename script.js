@@ -148,10 +148,16 @@ const drepGrid = document.querySelector("#drepGrid");
 const emptyState = document.querySelector("#emptyState");
 const supporterCount = document.querySelector("#supporterCount");
 const drepResultCount = document.querySelector("#drepResultCount");
+const liveVoteCore = document.querySelector("#liveVoteCore");
+const liveVoteEyebrow = document.querySelector("#liveVoteEyebrow");
+const liveYesPercent = document.querySelector("#liveYesPercent");
+const liveVoteLabel = document.querySelector("#liveVoteLabel");
+const liveVoteAnnouncement = document.querySelector("#liveVoteAnnouncement");
+const heroYesCount = document.querySelector("#heroYesCount");
 
 const countTargets = {
   teams: ["#heroTeamMetric", "#ecosystemTeamCount"],
-  supporters: ["#heroYesCount", "#supporterCount"],
+  supporters: ["#supporterCount"],
 };
 
 countTargets.teams.forEach((selector) => {
@@ -160,6 +166,96 @@ countTargets.teams.forEach((selector) => {
 countTargets.supporters.forEach((selector) => {
   document.querySelector(selector).textContent = supporters.length;
 });
+
+let lastLiveVoteStatus = null;
+let lastAnnouncedVoteKey = "";
+let liveVoteRefreshInFlight = false;
+
+async function refreshLiveVoteStatus() {
+  if (!liveVoteCore || !liveVoteEyebrow || !liveYesPercent || !liveVoteLabel) return;
+  if (liveVoteRefreshInFlight) return;
+
+  liveVoteRefreshInFlight = true;
+  liveVoteCore.setAttribute("aria-busy", "true");
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 12_000);
+
+  try {
+    const response = await fetch("/api/vote-status", {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Vote feed returned ${response.status}`);
+
+    const status = await response.json();
+    const yesPercent = Number(status.yesPercent);
+    if (!Number.isFinite(yesPercent) || yesPercent < 0 || yesPercent > 100) {
+      throw new Error("Vote feed returned an invalid percentage");
+    }
+
+    const yesVotes = status.yesVotes === null || status.yesVotes === "" ? null : Number(status.yesVotes);
+    const hasValidYesVotes = Number.isSafeInteger(yesVotes) && yesVotes >= 0;
+    const refreshedAt = new Date(status.fetchedAt);
+    const refreshedLabel = Number.isNaN(refreshedAt.getTime())
+      ? "just now"
+      : refreshedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const voterDetail = hasValidYesVotes ? ` ${yesVotes} DReps currently vote Yes.` : "";
+    const accessibleStatus = `${yesPercent.toFixed(2)}% of eligible DRep voting power is Yes.${voterDetail} Live from AdaStat, refreshed ${refreshedLabel}.`;
+
+    lastLiveVoteStatus = { yesPercent, yesVotes: hasValidYesVotes ? yesVotes : null, accessibleStatus };
+
+    liveVoteEyebrow.textContent = "LIVE · ADASTAT";
+    liveYesPercent.textContent = `${yesPercent.toFixed(2)}%`;
+    liveVoteLabel.textContent = "DREP YES POWER";
+    liveVoteCore.dataset.feedState = "live";
+    liveVoteCore.setAttribute("aria-label", `${accessibleStatus} Open the live AdaStat tracker.`);
+    liveVoteCore.setAttribute("title", accessibleStatus);
+    liveVoteCore.setAttribute("aria-busy", "false");
+    if (heroYesCount && hasValidYesVotes) heroYesCount.textContent = yesVotes;
+
+    const announcementKey = `${yesPercent.toFixed(2)}:${hasValidYesVotes ? yesVotes : "unknown"}`;
+    if (liveVoteAnnouncement && announcementKey !== lastAnnouncedVoteKey) {
+      liveVoteAnnouncement.textContent = accessibleStatus;
+      lastAnnouncedVoteKey = announcementKey;
+    }
+  } catch (error) {
+    if (lastLiveVoteStatus) {
+      liveVoteEyebrow.textContent = "ADASTAT · LAST LIVE";
+      liveVoteLabel.textContent = "RECONNECTING";
+      liveVoteCore.dataset.feedState = "stale";
+      liveVoteCore.setAttribute("aria-label", `${lastLiveVoteStatus.accessibleStatus} The live refresh is temporarily unavailable. Open the AdaStat tracker.`);
+      liveVoteCore.setAttribute("title", "Showing the last live value while reconnecting to AdaStat");
+      if (liveVoteAnnouncement && lastAnnouncedVoteKey !== `stale:${lastLiveVoteStatus.yesPercent}`) {
+        liveVoteAnnouncement.textContent = "The live AdaStat refresh is temporarily unavailable. Showing the last successful value.";
+        lastAnnouncedVoteKey = `stale:${lastLiveVoteStatus.yesPercent}`;
+      }
+    } else {
+      liveVoteEyebrow.textContent = "ADASTAT";
+      liveYesPercent.textContent = "--.--%";
+      liveVoteLabel.textContent = "FEED UNAVAILABLE";
+      liveVoteCore.dataset.feedState = "error";
+      liveVoteCore.setAttribute("aria-label", "The live DRep Yes voting-power feed is temporarily unavailable. Open the AdaStat tracker.");
+      liveVoteCore.setAttribute("title", "Live vote feed temporarily unavailable");
+      if (liveVoteAnnouncement && lastAnnouncedVoteKey !== "error") {
+        liveVoteAnnouncement.textContent = "The live AdaStat vote feed is temporarily unavailable.";
+        lastAnnouncedVoteKey = "error";
+      }
+    }
+    liveVoteCore.setAttribute("aria-busy", "false");
+  } finally {
+    window.clearTimeout(timeout);
+    liveVoteRefreshInFlight = false;
+  }
+}
+
+if (liveVoteCore) {
+  refreshLiveVoteStatus();
+  window.setInterval(refreshLiveVoteStatus, 60_000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshLiveVoteStatus();
+  });
+}
 
 logoField.innerHTML = `
   <div class="field-core" aria-hidden="true">

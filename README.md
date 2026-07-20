@@ -5,12 +5,13 @@ A dark-mode public information site for the AlphaGrowth Cardano PRIME governance
 It combines:
 
 - a source-grounded summary of the 12-month PRIME program;
+- a live AdaStat-powered readout of DRep Yes voting power in the hero;
 - an exact 28-team Cardano DeFi participant field, alphabetized and using dark-mode logo assets;
 - a July 20, 2026 snapshot of all 54 verified on-chain Yes votes, ordered by voting power;
 - source-verified public profile images or organization marks for 40 of those DReps, with neutral monograms for unmatched identities;
 - the eight public support posts supplied in the proposal appendix.
 
-The site is static HTML, CSS, and JavaScript and deploys directly to Vercel.
+The public interface is static HTML, CSS, and JavaScript. One Vercel function reads the public AdaStat feed so the hero percentage stays current without exposing credentials or relying on private sources.
 
 ## Sources
 
