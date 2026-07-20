@@ -183,10 +183,123 @@ const liveVoteAnnouncement = document.querySelector("#liveVoteAnnouncement");
 const heroYesCount = document.querySelector("#heroYesCount");
 const supporterLiveCount = document.querySelector("#supporterLiveCount");
 const overflowConstellationRows = Math.ceil(Math.max(0, teams.length - constellation.length) / CONSTELLATION_COLUMNS);
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const countFormatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const counterStates = new WeakMap();
+const counterElements = [...document.querySelectorAll("[data-count-animate]")];
 
 if (logoField) {
   logoField.style.setProperty("--constellation-extra-space", `${overflowConstellationRows * CONSTELLATION_OVERFLOW_FIELD_SPACE}px`);
 }
+
+function getCounterState(element) {
+  let state = counterStates.get(element);
+  if (!state) {
+    state = { frame: null, hasPlayed: false, motionId: 0, motionTimer: null, target: null, value: null, visible: false };
+    counterStates.set(element, state);
+  }
+  return state;
+}
+
+function renderCounter(element, value) {
+  const formattedValue = countFormatter.format(value);
+  const state = getCounterState(element);
+  state.value = value;
+  element.textContent = formattedValue;
+  if (element.dataset.countLabel) element.setAttribute("aria-label", `${formattedValue} ${element.dataset.countLabel}`);
+}
+
+function pulseCounter(element, state) {
+  const motionId = ++state.motionId;
+  element.classList.remove("is-counting");
+  if (state.motionTimer) window.clearTimeout(state.motionTimer);
+  requestAnimationFrame(() => {
+    if (state.motionId === motionId) element.classList.add("is-counting");
+  });
+  state.motionTimer = window.setTimeout(() => {
+    if (state.motionId === motionId) element.classList.remove("is-counting");
+  }, 820);
+}
+
+function animateCounter(element, target, { from = 0 } = {}) {
+  const state = getCounterState(element);
+  if (state.frame) cancelAnimationFrame(state.frame);
+
+  if (prefersReducedMotion || from === target) {
+    renderCounter(element, target);
+    state.frame = null;
+    state.hasPlayed = true;
+    return;
+  }
+
+  state.hasPlayed = false;
+  pulseCounter(element, state);
+  const startedAt = performance.now();
+  const duration = 720;
+  const step = (now) => {
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 4);
+    renderCounter(element, Math.round(from + (target - from) * eased));
+    if (progress < 1) {
+      state.frame = requestAnimationFrame(step);
+      return;
+    }
+    renderCounter(element, target);
+    state.frame = null;
+    state.hasPlayed = true;
+  };
+  state.frame = requestAnimationFrame(step);
+}
+
+function setCountTarget(element, value) {
+  if (!element) return;
+  const parsedValue = Number(value);
+  if (!Number.isFinite(parsedValue) || parsedValue < 0) return;
+  const target = Math.round(parsedValue);
+  const state = getCounterState(element);
+  const changed = state.target !== target;
+  state.target = target;
+  element.dataset.countTarget = String(target);
+
+  if (prefersReducedMotion) {
+    renderCounter(element, target);
+    state.hasPlayed = true;
+    return;
+  }
+
+  if (!state.visible) {
+    if (state.value === null) renderCounter(element, 0);
+    return;
+  }
+
+  if (state.frame || (!changed && state.hasPlayed)) return;
+  animateCounter(element, target, { from: state.hasPlayed && state.value !== null ? state.value : 0 });
+}
+
+function replayCounter(element) {
+  const state = getCounterState(element);
+  if (prefersReducedMotion || !state.visible || state.target === null) return;
+  animateCounter(element, state.target, { from: 0 });
+}
+
+const counterObserver = typeof IntersectionObserver === "undefined" || prefersReducedMotion
+  ? null
+  : new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const state = getCounterState(entry.target);
+      state.visible = true;
+      if (state.target !== null && !state.hasPlayed && !state.frame) animateCounter(entry.target, state.target);
+      counterObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.55 });
+
+counterElements.forEach((element) => {
+  const state = getCounterState(element);
+  if (counterObserver) counterObserver.observe(element);
+  else state.visible = true;
+  element.addEventListener("pointerenter", () => replayCounter(element), { passive: true });
+});
 
 const countTargets = {
   teams: ["#heroTeamMetric", "#ecosystemTeamCount"],
@@ -194,10 +307,10 @@ const countTargets = {
 };
 
 countTargets.teams.forEach((selector) => {
-  document.querySelector(selector).textContent = teams.length;
+  setCountTarget(document.querySelector(selector), teams.length);
 });
 countTargets.supporters.forEach((selector) => {
-  document.querySelector(selector).textContent = supporters.length;
+  setCountTarget(document.querySelector(selector), supporters.length);
 });
 
 let lastLiveVoteStatus = null;
@@ -248,8 +361,8 @@ async function refreshLiveVoteStatus() {
     liveVoteCore.setAttribute("title", accessibleStatus);
     liveVoteCore.setAttribute("aria-busy", "false");
     if (hasValidYesVotes) {
-      if (heroYesCount) heroYesCount.textContent = yesVotes;
-      if (supporterLiveCount) supporterLiveCount.textContent = yesVotes;
+      setCountTarget(heroYesCount, yesVotes);
+      setCountTarget(supporterLiveCount, yesVotes);
     }
 
     const announcementKey = `${yesPercent.toFixed(2)}:${hasValidYesVotes ? yesVotes : "unknown"}`;
@@ -392,7 +505,7 @@ function renderSupporters(items) {
     </a>
   `;
   }).join("");
-  supporterCount.textContent = supporters.length;
+  setCountTarget(supporterCount, supporters.length);
   drepResultCount.textContent = `Showing ${items.length} of ${supporters.length} verified Yes voters`;
   emptyState.hidden = items.length !== 0;
 }
@@ -421,9 +534,8 @@ const fieldObserver = new IntersectionObserver(([entry]) => {
 fieldObserver.observe(logoField);
 
 const finePointer = window.matchMedia("(pointer: fine)").matches;
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-if (finePointer && !reducedMotion) {
+if (finePointer && !prefersReducedMotion) {
   const root = document.documentElement;
   const halo = document.querySelector(".cursor-halo");
   const dot = document.querySelector(".cursor-dot");
