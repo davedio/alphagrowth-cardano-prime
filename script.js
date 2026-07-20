@@ -100,6 +100,49 @@ const supporters = [
   ["eoniam/Chad the New Mexico DRep", "drep1yfltkppxdvpxjzv3meraz9wch4fzlmy8qxr6ey57gh0khqgug8qln", 681.576603, 365],
 ];
 
+const supporterProfiles = {
+  "drep1y2200we9c904un36tzaearntzzl63snffuul9qsk0te4utqfkke0w": { image: "assets/dreps/yuta.png", kind: "person", source: "https://x.com/yuta_cryptox" },
+  "drep1ytfwpmt2fvdnyvlswyjyggpf8alwkpm7ha6cua9nsak525ssmvm57": { image: "assets/dreps/crypto-crow.jpg", kind: "person", source: "https://x.com/jasonappleton" },
+  "drep1yt77crnmjuqkj9gcwjjsurez7s07jhwhyt4suxs3xeqftcsfrspun": { image: "assets/dreps/jazz.jpg", kind: "person", source: "https://x.com/Hideki_Takeshi" },
+  "drep1yg343cyuckglj48a6gpcey7fkfcy5x5f9g65wme3ne9q2mgaedmkm": { image: "assets/dreps/phil-uplc.jpg", kind: "person", source: "https://x.com/phil_uplc" },
+  "drep1ytwmwvtd0a8lr45ssner2tjxzv5y8q03w3606yeald9mdmgmwecja": { image: "assets/dreps/martin-lang.jpg", kind: "person", source: "https://forum.cardano.org/t/martin-lang-individual-introduction/142574" },
+  "drep1ygm9wxzrrdqpt0hek5kj7ys6tmsc8dycp7tkjwqxqrhjr6csq3s3t": { image: "assets/dreps/patrick-tobler.jpg", kind: "person", source: "https://x.com/Padierfind" },
+  "drep1yfu5d42qfu7e3euu4kkamcg3g3z2zn6sd674gkdww8ey63stlsrlt": { image: "assets/dreps/linda-cryptofly.jpg", kind: "person", source: "https://x.com/Cryptofly777" },
+  "drep1ygctwczmpjxef8w3ljugkdth2d4upz2f2yfv9mvyxe0papswz26s6": { image: "assets/ecosystem/liqwid.svg", kind: "logo", source: "https://x.com/liqwidfinance" },
+  "drep1ygeqtuysjy9s3mw3ej7essghq9rk3cnl08fehntu4jw3rtqfw96dg": { image: "assets/dreps/fimi.png", kind: "logo", source: "https://fimi.vn/" },
+  "drep1ygtxcscvznhs2nqap9u8gtxa0dx0l6q5zhsqqlw46enwh8cttd07h": { image: "assets/dreps/tera.png", kind: "logo", source: "https://cardano-tera.com/" },
+  "drep1yfaaaaa270yjt6tu5skndugekprf5ykv5jshanl0c6gqx5qpstskf": { image: "assets/dreps/drep-one.png", kind: "person", source: "https://x.com/stakenuts" },
+  "drep1ygnypzfv2v8fmfelthahvn0rqyh54sf6z2aa5m7f3fkjgqqt8l2qq": { image: "assets/dreps/blockjock.jpg", kind: "person", source: "https://x.com/blockjock2017" },
+  "drep1ytzshxuma6cwrnlv2ucyclfqw3k4nu4nuudmh2z87j9hncsk9dhy4": { image: "assets/dreps/kyle-solomon.jpg", kind: "person", source: "https://x.com/ADAFrog_Pool" },
+  "drep1yfa8r8r36x7x05htftce7qhafrn5nzzr6vazy95pzy6y5dqac0ss7": { image: "assets/dreps/wolf31o2.png", kind: "person", source: "https://x.com/wolf31o2" },
+  "drep1ytfnmf4uftt4fe0h63xhadl0v402gr6nnhtcgrq2sas26kgaf3n5y": { image: "assets/dreps/dino.jpg", kind: "logo", source: "https://x.com/SPO_DINO" },
+  "drep1y27qjjnz9a7q6zmvpajzqpqylnka6lpkvcm9sgjrdheqt0qq6pchw": { image: "assets/dreps/straightpool.svg", kind: "logo", source: "https://x.com/Straightpool4" },
+  "drep1yfpj9e6k9q2et7nsutu0e7ymqt0v00aj57chnltjvn0lu0s28xakv": { image: "assets/dreps/corroon.jpg", kind: "person", source: "https://x.com/corroonian" },
+  "drep1y26sfka2km0p4xw073ujdq406wxxczhdyfh9vw7yxpfselchzkdjn": { image: "assets/dreps/yoada.png", kind: "logo", source: "https://x.com/YoadaStakepool" },
+  "drep1ytfas4axhm8yzrqqh4ru2uuqesu87zeq6fwg5pq8azqf7ecu4nu8s": { image: "assets/dreps/peter-horsfall.jpg", kind: "person", source: "https://x.com/blockchain_pete" },
+  "drep1yg8vjs7ute7z7vyd8yez5tgjey6043djjfh8d3n7sjev35g064xxc": { image: "assets/dreps/earn-coin-pool.jpg", kind: "logo", source: "https://x.com/earncoinpool" },
+  "drep1ygeyfh8nm03dnl5a2hxdtv09pu7uhep9l0cpg0zpr60jqys05cku2": { image: "assets/dreps/cash.png", kind: "person", source: "https://x.com/CashAnvil" },
+  "drep1y2t3t35yx7j8nnh3wkqn2zzhgwqksksn85zv62pjrwzjawczwgyv7": { image: "assets/dreps/no-stress.jpg", kind: "logo", source: "https://x.com/EPOCHpool" },
+  "drep1y2t4hsu6zk98407q4ymj5jnm2d52rh76dv6whl88r9dts4qayakaf": { image: "assets/dreps/octas.jpg", kind: "logo", source: "https://www.cardanocube.com/governance/dreps/drep1y2t4hsu6zk98407q4ymj5jnm2d52rh76dv6whl88r9dts4qayakaf" },
+  "drep1yghm3canzwv736un9usqrxpfvxrm68k9hz0ppvrxe7n7lfgmsxru8": { image: "assets/dreps/taichiyokoyama.jpg", kind: "person", source: "https://x.com/taichiyokoyama" },
+  "drep1ytkzpmmukjy6qn6xd5skqm0ypcj5juw9rxddr5mmlzgjvtcghwqjr": { image: "assets/dreps/this-corrosion.jpg", kind: "person", source: "https://www.cardanocube.com/governance/dreps/drep1ytkzpmmukjy6qn6xd5skqm0ypcj5juw9rxddr5mmlzgjvtcghwqjr" },
+  "drep1y27a56gx9vm6yhjm9wsvvp847mt0dv4cyx93vz2r5rjytnsew90d6": { image: "assets/dreps/next-epoch.webp", kind: "person", position: "50% 24%", source: "https://x.com/Next_Epoch" },
+  "drep1ydwtnlvdd8atlj5c5ylgw4kg5e640vyt8resattrjmwufyg4qclf7": { image: "assets/dreps/drep-collective.jpg", kind: "logo", source: "https://www.cardanocube.com/governance/dreps/drep1ydwtnlvdd8atlj5c5ylgw4kg5e640vyt8resattrjmwufyg4qclf7" },
+  "drep1yg7svuv02gh9j2q574jv06l4xnzwyp63effljze28qe993caj8ras": { image: "assets/dreps/brian.jpg", kind: "person", source: "https://x.com/Brian67587820" },
+  "drep1yg7s3wsvh4jmmv5fys6hrsnrkch8x6zfamgd8nhfvhz5r2ctdy57k": { image: "assets/dreps/lido-nation.jpg", kind: "logo", source: "https://x.com/LidoNation" },
+  "drep1ytd2mf58tfqv78z7e99fy0gnmfep0kscclnwpvx7qvwpc5srxwg5g": { image: "assets/dreps/crypto-eats.jpg", kind: "person", source: "https://x.com/cryptoeatlegacy" },
+  "drep1ytwlmrm6ksc8sa5fdhm63prqve6hjzvghdc3053zwz6hyeg0ayhg2": { image: "assets/dreps/crypto-oaj.jpg", kind: "person", source: "https://x.com/omid_ajorlou" },
+  "drep1yg5v33dh3pvf9xelauyd5l9qsa3yd6lezf4u7kccp3xqwjspcz3py": { image: "assets/dreps/austin-anthony.jpg", kind: "person", source: "https://x.com/CardanoDrep" },
+  "drep1yf94hp0xetd87e5stlxwrtlqwjq6qhqx6zfdu94wdr5dfagp38nd4": { image: "assets/dreps/asy.jpg", kind: "person", source: "https://x.com/ashiyapool" },
+  "drep1yfzzwr8jznn02mzepvs6y9n4329eskzpgygjdh4ew28szpcd5hr4f": { image: "assets/dreps/faridcz.webp", kind: "person", source: "https://www.cardanoeco.cz/" },
+  "drep1yf7nwlcvdql5kqvaqvmzyj5azqcc5s4y4wm2sm0ng3nzkkgpavmcg": { image: "assets/dreps/rcorreia.png", kind: "person", source: "https://x.com/paeancorreia" },
+  "drep1ygnwcy4wk6n7v9ksdefnhsy7jmz7q5ra0pvylan2eqfyr7qezgn8r": { image: "assets/dreps/envy.jpg", kind: "logo", source: "https://x.com/envystakepool" },
+  "drep1y2hwk9gqua527ghfdysfjuzeuh4zcad7nveqzupm84h5adqjv22cu": { image: "assets/dreps/bat-community.jpg", kind: "logo", source: "https://x.com/BAT_Community" },
+  "drep1yfgssww5qn4w5w9g2pmtj94rg0l2jtcz87w9d4m459dpqhqm9g4pu": { image: "assets/dreps/world-peace.svg", kind: "logo", source: "https://x.com/robert_drep" },
+  "drep1ytm2zedqf54prqf5kfvzq56dgr7s3p4h53w8z428z6l2c8cj8e33y": { image: "assets/dreps/anonymous.jpg", kind: "person", source: "https://x.com/AnonymousDRep" },
+  "drep1yfltkppxdvpxjzv3meraz9wch4fzlmy8qxr6ey57gh0khqgug8qln": { image: "assets/dreps/chad-new-mexico.jpg", kind: "person", source: "https://adastat.net/dreps/drep1yfltkppxdvpxjzv3meraz9wch4fzlmy8qxr6ey57gh0khqgug8qln" },
+};
+
 const logoField = document.querySelector("#logoField");
 const drepGrid = document.querySelector("#drepGrid");
 const emptyState = document.querySelector("#emptyState");
@@ -168,25 +211,55 @@ function formatPower(power) {
   return Math.round(power).toLocaleString("en-US");
 }
 
+function formatAccessiblePower(power) {
+  return power.toLocaleString("en-US", { maximumFractionDigits: 6 });
+}
+
+function getSupporterInitials(name) {
+  if (name.startsWith("Direct voter")) return name.slice(-2).toUpperCase();
+  const words = name
+    .replace(/\([^)]*\)/g, "")
+    .replace(/[^\p{L}\p{N}$]+/gu, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!words.length) return "DR";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return `${words[0][0]}${words.at(-1)[0]}`.toUpperCase();
+}
+
 function renderSupporters(items) {
   drepGrid.innerHTML = items.map(([name, id, power, rank]) => {
     const [tier, tierLabel] = getPowerTier(power);
     const order = orderedSupporters.findIndex((supporter) => supporter[1] === id) + 1;
+    const profile = supporterProfiles[id];
+    const profileLabel = profile ? (profile.kind === "logo" ? "VERIFIED ORGANIZATION" : "VERIFIED PUBLIC PROFILE") : "ON-CHAIN DREP";
+    const initials = getSupporterInitials(name);
     return `
     <a
       class="drep-card"
+      role="listitem"
       data-tier="${tier}"
       href="https://adastat.net/dreps/${id}"
       target="_blank"
       rel="noreferrer"
       title="${id}"
-      aria-label="${name}, ${formatPower(power)} ADA voting power, verified Yes vote, open DRep record"
+      aria-label="${name}, ${formatAccessiblePower(power)} ADA voting power, verified Yes vote, open DRep record"
     >
       <span class="drep-card__top">
         <span class="drep-order">#${String(order).padStart(2, "0")} · RANK ${rank}</span>
-        <span class="drep-tier">${tierLabel}</span>
+        <span class="drep-tier">${tierLabel} <span aria-hidden="true">↗</span></span>
       </span>
-      <strong>${name}</strong>
+      <span class="drep-card__identity">
+        <span class="drep-avatar" data-kind="${profile?.kind || "fallback"}" aria-hidden="true">
+          <span>${initials}</span>
+          ${profile ? `<img src="${profile.image}" alt="" loading="lazy" decoding="async"${profile.position ? ` style="object-position:${profile.position}"` : ""} onerror="this.remove()" />` : ""}
+        </span>
+        <span class="drep-card__name">
+          <strong>${name}</strong>
+          <small>${profileLabel}</small>
+        </span>
+      </span>
       <span class="drep-card__bottom">
         <span class="drep-power"><b>${formatPower(power)}</b><small>ADA voting power</small></span>
         <span class="verified-mark">YES ✓</span>

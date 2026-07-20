@@ -7,6 +7,7 @@ It combines:
 - a source-grounded summary of the 12-month PRIME program;
 - an exact 28-team Cardano DeFi participant field, alphabetized and using dark-mode logo assets;
 - a July 20, 2026 snapshot of all 54 verified on-chain Yes votes, ordered by voting power;
+- source-verified public profile images or organization marks for 40 of those DReps, with neutral monograms for unmatched identities;
 - the eight public support posts supplied in the proposal appendix.
 
 The site is static HTML, CSS, and JavaScript and deploys directly to Vercel.
