@@ -552,36 +552,67 @@ if (finePointer && !prefersReducedMotion) {
   let lastMotionAt = 0;
   let cardSnapshots = [];
   let fieldActive = false;
-  const cardMotions = new Map(magneticCards.map((card) => [card, { x: 0, y: 0, targetX: 0, targetY: 0 }]));
+  const cardMotions = new Map(magneticCards.map((card) => [card, {
+    x: 0,
+    y: 0,
+    z: 0,
+    rotation: 0,
+    scale: 1,
+    targetX: 0,
+    targetY: 0,
+    targetZ: 0,
+    targetRotation: 0,
+    targetScale: 1
+  }]));
 
-  const renderCardMotion = (card, x, y) => {
+  const renderCardMotion = (card, x, y, z, rotation, scale) => {
     card.style.setProperty("--mag-x", `${x.toFixed(2)}px`);
     card.style.setProperty("--mag-y", `${y.toFixed(2)}px`);
+    card.style.setProperty("--mag-z", `${z.toFixed(2)}px`);
+    card.style.setProperty("--mag-r", `${rotation.toFixed(2)}deg`);
+    card.style.setProperty("--mag-scale", scale.toFixed(4));
   };
 
-  const setCardTarget = (card, x = 0, y = 0) => {
+  const setCardTarget = (card, x = 0, y = 0, z = 0, rotation = 0, scale = 1) => {
     const motion = cardMotions.get(card);
     if (!motion) return;
     motion.targetX = x;
     motion.targetY = y;
+    motion.targetZ = z;
+    motion.targetRotation = rotation;
+    motion.targetScale = scale;
   };
 
   const animateCardMotion = (now) => {
     const elapsed = lastMotionAt ? Math.max(1, Math.min(32, now - lastMotionAt)) : 16.7;
-    const blend = 1 - Math.exp(-elapsed / 92);
+    const blend = 1 - Math.exp(-elapsed / (fieldActive ? 92 : 145));
     lastMotionAt = now;
     let isSettling = false;
 
     cardMotions.forEach((motion, card) => {
       motion.x += (motion.targetX - motion.x) * blend;
       motion.y += (motion.targetY - motion.y) * blend;
-      if (Math.abs(motion.targetX - motion.x) < .025 && Math.abs(motion.targetY - motion.y) < .025) {
+      motion.z += (motion.targetZ - motion.z) * blend;
+      motion.rotation += (motion.targetRotation - motion.rotation) * blend;
+      motion.scale += (motion.targetScale - motion.scale) * blend;
+
+      const hasSettled =
+        Math.abs(motion.targetX - motion.x) < .025 &&
+        Math.abs(motion.targetY - motion.y) < .025 &&
+        Math.abs(motion.targetZ - motion.z) < .025 &&
+        Math.abs(motion.targetRotation - motion.rotation) < .006 &&
+        Math.abs(motion.targetScale - motion.scale) < .00005;
+
+      if (hasSettled) {
         motion.x = motion.targetX;
         motion.y = motion.targetY;
+        motion.z = motion.targetZ;
+        motion.rotation = motion.targetRotation;
+        motion.scale = motion.targetScale;
       } else {
         isSettling = true;
       }
-      renderCardMotion(card, motion.x, motion.y);
+      renderCardMotion(card, motion.x, motion.y, motion.z, motion.rotation, motion.scale);
     });
 
     if (isSettling) {
@@ -601,9 +632,15 @@ if (finePointer && !prefersReducedMotion) {
   };
 
   const measureCards = () => {
+    const fieldRect = logoField.getBoundingClientRect();
     cardSnapshots = magneticCards.map((card) => {
-      const rect = card.getBoundingClientRect();
-      return { card, centerX: rect.left + rect.width / 2, centerY: rect.top + rect.height / 2 };
+      return {
+        card,
+        centerX: fieldRect.left + card.offsetLeft + card.offsetWidth / 2,
+        centerY: fieldRect.top + card.offsetTop + card.offsetHeight / 2,
+        width: card.offsetWidth,
+        height: card.offsetHeight
+      };
     });
   };
 
@@ -620,21 +657,28 @@ if (finePointer && !prefersReducedMotion) {
     magnetFrame = null;
     if (!fieldActive) return;
     const fieldRect = logoField.getBoundingClientRect();
-    const radius = Math.min(290, Math.max(190, fieldRect.width * .29));
-    const maxShift = Math.min(9, Math.max(6, fieldRect.width * .01));
+    const radius = Math.min(300, Math.max(210, fieldRect.width * .32));
+    const maxSpread = Math.min(15, Math.max(11, fieldRect.width * .014));
 
-    cardSnapshots.forEach(({ card, centerX, centerY }) => {
+    cardSnapshots.forEach(({ card, centerX, centerY, width, height }) => {
       const dx = pointerX - centerX;
       const dy = pointerY - centerY;
       const distance = Math.hypot(dx, dy);
       const influence = Math.max(0, 1 - distance / radius);
       if (influence <= 0) return setCardTarget(card);
 
-      const power = influence * influence;
-      const safeDistance = Math.max(distance, 32);
-      const x = Math.max(-maxShift, Math.min(maxShift, (dx / safeDistance) * maxShift * power));
-      const y = Math.max(-maxShift, Math.min(maxShift, (dy / safeDistance) * maxShift * power - 2 * power));
-      setCardTarget(card, x, y);
+      const power = influence * influence * (3 - 2 * influence);
+      const safeDistance = Math.max(distance, 24);
+      const insideBoost = Math.max(0, 1 - distance / Math.max(width, height));
+      const spread = maxSpread * power + 4 * insideBoost;
+      const rowInfluence = Math.max(0, 1 - Math.abs(dy) / Math.max(height * 1.55, 1));
+      const horizontalSide = Math.tanh((centerX - pointerX) / Math.max(width * .34, 1));
+      const rowPush = horizontalSide * maxSpread * .18 * rowInfluence;
+      const x = Math.max(-18, Math.min(18, (-dx / safeDistance) * spread + rowPush));
+      const y = Math.max(-18, Math.min(13, (-dy / safeDistance) * spread - 3.5 * power));
+      const z = 15 * power;
+      const rotation = Math.max(-2.5, Math.min(2.5, (-dx / Math.max(width, 1)) * 2.5 * power));
+      setCardTarget(card, x, y, z, rotation, 1 + .018 * power);
     });
     requestCardMotion();
   };
