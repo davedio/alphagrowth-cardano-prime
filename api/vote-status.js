@@ -23,6 +23,14 @@ function extractJsonInteger(text, field) {
   return BigInt(match[1]);
 }
 
+function extractJsonVoteCount(text, fields) {
+  for (const field of fields) {
+    const match = text.match(new RegExp(`"${field}"\\s*:\\s*"?([0-9]+)"?`));
+    if (match) return toVoteCount(match[1]);
+  }
+  return null;
+}
+
 async function fetchText(url, timeoutMs, extraHeaders = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -42,7 +50,6 @@ async function fetchText(url, timeoutMs, extraHeaders = {}) {
 
 async function readAdaStat() {
   const text = await fetchText(ADASTAT_API_URL, 4_500, { Referer: "https://adastat.net/" });
-  const data = JSON.parse(text);
   const yesStake = extractJsonInteger(text, "drep_yes_stake");
   const totalStake = extractJsonInteger(text, "drep_total_stake");
   const abstainStake = extractJsonInteger(text, "drep_abstain_stake");
@@ -52,9 +59,9 @@ async function readAdaStat() {
 
   return {
     yesPercent: percentageFromStake(yesStake, eligibleVotingStake),
-    yesVotes: toVoteCount(data.drep_vote_yes ?? data.drep_yes),
-    noVotes: toVoteCount(data.drep_vote_no ?? data.drep_no),
-    abstainVotes: toVoteCount(data.drep_vote_abstain ?? data.drep_abstain),
+    yesVotes: extractJsonVoteCount(text, ["drep_vote_yes", "drep_yes"]),
+    noVotes: extractJsonVoteCount(text, ["drep_vote_no", "drep_no"]),
+    abstainVotes: extractJsonVoteCount(text, ["drep_vote_abstain", "drep_abstain"]),
     yesStake: yesStake.toString(),
     eligibleVotingStake: eligibleVotingStake.toString(),
     source: "AdaStat",
