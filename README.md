@@ -6,7 +6,7 @@ It combines:
 
 - a source-grounded summary of the 12-month PRIME program;
 - a public-source live readout of DRep Yes voting power in the hero;
-- an exact 28-team Cardano DeFi participant field, alphabetized and using dark-mode logo assets;
+- an alphabetized, roster-derived Cardano DeFi participant field whose visible count and layout expand as protocols are added;
 - a July 20, 2026 snapshot of all 54 verified on-chain Yes votes, ordered by voting power;
 - source-verified public profile images or organization marks for 40 of those DReps, with neutral monograms for unmatched identities;
 - the eight public support posts supplied in the proposal appendix.
