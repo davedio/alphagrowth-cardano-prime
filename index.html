@@ -87,9 +87,20 @@
             <small id="liveVoteLabel">CONNECTING</small>
           </a>
           <span class="sr-only" id="liveVoteAnnouncement" role="status" aria-live="polite"></span>
-          <div class="orbit-tag tag-one" aria-hidden="true">AUDIT</div>
-          <div class="orbit-tag tag-two" aria-hidden="true">DEPLOY</div>
-          <div class="orbit-tag tag-three" aria-hidden="true">MEASURE</div>
+          <div class="orbit-stat tag-one">
+            <span class="orbit-stat__dot" aria-hidden="true"></span>
+            <span class="orbit-stat__copy">
+              <strong id="orbitTeamCount" class="count-number" data-count-animate data-count-label="DeFi apps coordinating">--</strong>
+              <small aria-hidden="true">DeFi apps<br />coordinating</small>
+            </span>
+          </div>
+          <div class="orbit-stat tag-two">
+            <span class="orbit-stat__dot" aria-hidden="true"></span>
+            <span class="orbit-stat__copy">
+              <strong id="orbitYesCount" class="count-number" data-count-animate data-count-label="DRep Yes votes">--</strong>
+              <small aria-hidden="true">DRep Yes<br />votes</small>
+            </span>
+          </div>
         </div>
 
         <div class="metric-strip reveal" aria-label="Proposal key figures">
