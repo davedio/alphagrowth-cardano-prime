@@ -324,8 +324,10 @@ h1 span { color: var(--green); }
 .logo-field {
   --field-cursor-x: 50%;
   --field-cursor-y: 50%;
+  --constellation-base-height: clamp(740px, 54vw, 800px);
+  --constellation-extra-space: 0px;
   position: relative;
-  min-height: clamp(740px, 54vw, 800px);
+  min-height: calc(var(--constellation-base-height) + var(--constellation-extra-space));
   margin-inline: -6px;
   padding: 18px 6px 28px;
   isolation: isolate;
@@ -388,8 +390,8 @@ h1 span { color: var(--green); }
   --float-r: 0deg;
   position: absolute;
   z-index: 2;
-  left: calc(var(--x) * 1%);
-  top: calc(var(--y) * 1%);
+  left: var(--card-left, calc(var(--x) * 1%));
+  top: var(--card-top, calc(var(--y) * 1%));
   width: clamp(148px, calc(var(--w) * 1%), 232px);
   height: calc(var(--h) * 1px);
   padding: 19px 16px 27px;
