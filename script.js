@@ -551,20 +551,19 @@ if (finePointer && !prefersReducedMotion) {
   let cardSnapshots = [];
   let fieldActive = false;
 
-  const setCardMotion = (card, x = 0, y = 0, z = 0, rotation = 0, scale = 1, opacity = 1) => {
+  const setCardMotion = (card, x = 0, y = 0) => {
     card.style.setProperty("--mag-x", `${x.toFixed(2)}px`);
     card.style.setProperty("--mag-y", `${y.toFixed(2)}px`);
-    card.style.setProperty("--mag-z", `${z.toFixed(2)}px`);
-    card.style.setProperty("--mag-r", `${rotation.toFixed(2)}deg`);
-    card.style.setProperty("--mag-scale", scale.toFixed(3));
-    card.style.setProperty("--mag-opacity", opacity.toFixed(3));
+    card.style.setProperty("--mag-z", "0px");
+    card.style.setProperty("--mag-r", "0deg");
+    card.style.setProperty("--mag-scale", "1");
+    card.style.setProperty("--mag-opacity", "1");
   };
 
   const measureCards = () => {
-    magneticCards.forEach((card) => setCardMotion(card));
     cardSnapshots = magneticCards.map((card) => {
       const rect = card.getBoundingClientRect();
-      return { card, centerX: rect.left + rect.width / 2, centerY: rect.top + rect.height / 2, width: rect.width, height: rect.height };
+      return { card, centerX: rect.left + rect.width / 2, centerY: rect.top + rect.height / 2 };
     });
   };
 
@@ -573,6 +572,7 @@ if (finePointer && !prefersReducedMotion) {
     magnetFrame = null;
     fieldActive = false;
     logoField.removeAttribute("data-active");
+    document.body.classList.remove("cursor-over-logos");
     magneticCards.forEach((card) => setCardMotion(card));
   };
 
@@ -580,28 +580,21 @@ if (finePointer && !prefersReducedMotion) {
     magnetFrame = null;
     if (!fieldActive) return;
     const fieldRect = logoField.getBoundingClientRect();
-    logoField.style.setProperty("--field-cursor-x", `${(pointerX - fieldRect.left).toFixed(1)}px`);
-    logoField.style.setProperty("--field-cursor-y", `${(pointerY - fieldRect.top).toFixed(1)}px`);
-    const radius = Math.min(315, Math.max(220, fieldRect.width * .34));
-    const maxSpread = Math.min(18, Math.max(13, fieldRect.width * .016));
+    const radius = Math.min(290, Math.max(190, fieldRect.width * .29));
+    const maxShift = Math.min(9, Math.max(6, fieldRect.width * .01));
 
-    cardSnapshots.forEach(({ card, centerX, centerY, width, height }) => {
+    cardSnapshots.forEach(({ card, centerX, centerY }) => {
       const dx = pointerX - centerX;
       const dy = pointerY - centerY;
       const distance = Math.hypot(dx, dy);
       const influence = Math.max(0, 1 - distance / radius);
       if (influence <= 0) return setCardMotion(card);
 
-      const power = influence * influence * (3 - 2 * influence);
-      const safeDistance = Math.max(distance, 20);
-      const insideBoost = Math.max(0, 1 - distance / Math.max(width, height));
-      const spread = maxSpread * power + 7 * insideBoost;
-      const rowPush = (centerX >= pointerX ? 1 : -1) * maxSpread * .25 * Math.max(0, 1 - Math.abs(dy) / (height * 1.45));
-      const x = Math.max(-22, Math.min(22, (-dx / safeDistance) * spread + rowPush));
-      const y = (-dy / safeDistance) * spread - 5 * power;
-      const z = 18 * power;
-      const rotation = Math.max(-3.5, Math.min(3.5, (-dx / Math.max(width, 1)) * 3.5 * power));
-      setCardMotion(card, x, y, z, rotation, 1 + .022 * power, 1);
+      const power = influence * influence;
+      const safeDistance = Math.max(distance, 32);
+      const x = Math.max(-maxShift, Math.min(maxShift, (dx / safeDistance) * maxShift * power));
+      const y = Math.max(-maxShift, Math.min(maxShift, (dy / safeDistance) * maxShift * power - 2 * power));
+      setCardMotion(card, x, y);
     });
   };
 
@@ -610,6 +603,7 @@ if (finePointer && !prefersReducedMotion) {
     measureCards();
     fieldActive = true;
     logoField.setAttribute("data-active", "true");
+    document.body.classList.add("cursor-over-logos");
   });
 
   logoField.addEventListener("pointermove", (event) => {
@@ -618,6 +612,7 @@ if (finePointer && !prefersReducedMotion) {
       measureCards();
       fieldActive = true;
       logoField.setAttribute("data-active", "true");
+      document.body.classList.add("cursor-over-logos");
     }
     pointerX = event.clientX;
     pointerY = event.clientY;
@@ -659,6 +654,7 @@ if (finePointer && !prefersReducedMotion) {
 
   document.addEventListener("mouseleave", () => {
     document.body.classList.remove("cursor-visible", "cursor-link");
+    document.body.classList.remove("cursor-over-logos");
     if (cursorFrame) cancelAnimationFrame(cursorFrame);
     cursorFrame = null;
   });
