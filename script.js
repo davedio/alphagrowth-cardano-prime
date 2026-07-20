@@ -148,10 +148,9 @@ const drepGrid = document.querySelector("#drepGrid");
 const emptyState = document.querySelector("#emptyState");
 const supporterCount = document.querySelector("#supporterCount");
 const drepResultCount = document.querySelector("#drepResultCount");
-const heroTeamRail = document.querySelector("#heroTeamRail");
 
 const countTargets = {
-  teams: ["#heroTeamCount", "#heroTeamMetric", "#ecosystemTeamCount"],
+  teams: ["#heroTeamMetric", "#ecosystemTeamCount"],
   supporters: ["#heroYesCount", "#supporterCount"],
 };
 
@@ -161,15 +160,6 @@ countTargets.teams.forEach((selector) => {
 countTargets.supporters.forEach((selector) => {
   document.querySelector(selector).textContent = supporters.length;
 });
-
-const heroTeamNames = teams.slice(0, 8).map((team) => team.name);
-const heroTeams = heroTeamNames.map((name) => teams.find((team) => team.name === name)).filter(Boolean);
-
-heroTeamRail.innerHTML = heroTeams.map((team) => `
-  <a href="${team.url}" target="_blank" rel="noreferrer" aria-label="${team.linkLabel || `Visit ${team.name}`}">
-    <img src="assets/ecosystem/${team.logo}" alt="${team.name}" loading="eager" />
-  </a>
-`).join("");
 
 logoField.innerHTML = `
   <div class="field-core" aria-hidden="true">
