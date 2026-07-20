@@ -196,16 +196,18 @@ async function refreshLiveVoteStatus() {
 
     const yesVotes = status.yesVotes === null || status.yesVotes === "" ? null : Number(status.yesVotes);
     const hasValidYesVotes = Number.isSafeInteger(yesVotes) && yesVotes >= 0;
+    const sourceName = ["AdaStat", "GovTool", "Koios"].includes(status.source) ? status.source : "public on-chain data";
+    const sourceLabel = sourceName.toUpperCase();
     const refreshedAt = new Date(status.fetchedAt);
     const refreshedLabel = Number.isNaN(refreshedAt.getTime())
       ? "just now"
       : refreshedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     const voterDetail = hasValidYesVotes ? ` ${yesVotes} DReps currently vote Yes.` : "";
-    const accessibleStatus = `${yesPercent.toFixed(2)}% of eligible DRep voting power is Yes.${voterDetail} Live from AdaStat, refreshed ${refreshedLabel}.`;
+    const accessibleStatus = `${yesPercent.toFixed(2)}% of eligible DRep voting power is Yes.${voterDetail} Live from ${sourceName}, refreshed ${refreshedLabel}.`;
 
-    lastLiveVoteStatus = { yesPercent, yesVotes: hasValidYesVotes ? yesVotes : null, accessibleStatus };
+    lastLiveVoteStatus = { yesPercent, yesVotes: hasValidYesVotes ? yesVotes : null, accessibleStatus, sourceName };
 
-    liveVoteEyebrow.textContent = "LIVE · ADASTAT";
+    liveVoteEyebrow.textContent = `LIVE · ${sourceLabel}`;
     liveYesPercent.textContent = `${yesPercent.toFixed(2)}%`;
     liveVoteLabel.textContent = "DREP YES POWER";
     liveVoteCore.dataset.feedState = "live";
@@ -221,13 +223,13 @@ async function refreshLiveVoteStatus() {
     }
   } catch (error) {
     if (lastLiveVoteStatus) {
-      liveVoteEyebrow.textContent = "ADASTAT · LAST LIVE";
+      liveVoteEyebrow.textContent = `${lastLiveVoteStatus.sourceName.toUpperCase()} · LAST LIVE`;
       liveVoteLabel.textContent = "RECONNECTING";
       liveVoteCore.dataset.feedState = "stale";
       liveVoteCore.setAttribute("aria-label", `${lastLiveVoteStatus.accessibleStatus} The live refresh is temporarily unavailable. Open the AdaStat tracker.`);
       liveVoteCore.setAttribute("title", "Showing the last live value while reconnecting to AdaStat");
       if (liveVoteAnnouncement && lastAnnouncedVoteKey !== `stale:${lastLiveVoteStatus.yesPercent}`) {
-        liveVoteAnnouncement.textContent = "The live AdaStat refresh is temporarily unavailable. Showing the last successful value.";
+        liveVoteAnnouncement.textContent = `The live ${lastLiveVoteStatus.sourceName} refresh is temporarily unavailable. Showing the last successful value.`;
         lastAnnouncedVoteKey = `stale:${lastLiveVoteStatus.yesPercent}`;
       }
     } else {
