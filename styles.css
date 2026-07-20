@@ -247,7 +247,7 @@ h1 span { color: var(--green); }
 .metric-strip {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   margin-top: 14px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -563,9 +563,9 @@ h1 span { color: var(--green); }
   .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 150px; }
   .hero-copy { max-width: 830px; }
   .hero-orbit { width: min(72vw, 480px); margin: 80px auto 0; }
-  .metric-strip { grid-template-columns: repeat(3, 1fr); }
-  .metric-strip div:nth-child(4) { border-left: 0; }
-  .metric-strip div:nth-child(n+4) { border-top: 1px solid var(--line); }
+  .metric-strip { grid-template-columns: repeat(2, 1fr); }
+  .metric-strip div:nth-child(odd) { border-left: 0; }
+  .metric-strip div:nth-child(n+3) { border-top: 1px solid var(--line); }
   .section-intro, .public-pulse { grid-template-columns: 1fr; gap: 36px; }
   .section-intro > p { max-width: 700px; }
   .pulse-heading { position: static; }
